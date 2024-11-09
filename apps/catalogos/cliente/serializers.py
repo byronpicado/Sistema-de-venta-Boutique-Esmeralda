@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Categoria
+from .models import Cliente
 
-class CategoriaSerializer(ModelSerializer):
+class ClienteSerializer(ModelSerializer):
     class Meta:
-        model = Categoria
-        fields = ('Descripcion', 'Estado', 'FechaRegistro')
+        model = Cliente
+        fields = ('Nombre', 'Apellido', 'Documento', 'Telefono', 'Email', 'Direccion')

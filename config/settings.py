@@ -12,6 +12,7 @@ MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 from apps.catalogos.setting_apps import CATALOGOS_SETTING_APPS
 from apps.seguridad.setting_apps import SEGURIDAD_SETTING_APPS
 from apps.movimientos.setting_apps import MOVIMIENTOS_SETTING_APPS
+from datetime import timedelta
 
 # Quick-start development settings - unsuitable for production
 # SECURITY WARNING: keep the secret key used in production secret!
@@ -30,8 +31,10 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'rest_framework'
-] + MOVIMIENTOS_SETTING_APPS + SEGURIDAD_SETTING_APPS + CATALOGOS_SETTING_APPS
+    'rest_framework',
+    'drf_yasg',
+    'rest_framework_simplejwt',
+    ] + MOVIMIENTOS_SETTING_APPS + SEGURIDAD_SETTING_APPS + CATALOGOS_SETTING_APPS
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -92,6 +95,24 @@ AUTH_PASSWORD_VALIDATORS = [
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
 ]
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ),
+    'DEFAULT_PERMISSION_CLASSES': (
+        'rest_framework.permissions.IsAuthenticated',
+    ),
+}
+
+
+SIMPLE_JWT = {
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=1),
+    'REFRESH_TOKEN_LIFETIME': timedelta(days=1),
+    'ROTATE_REFRESH_TOKENS': True,
+    'BLACKLIST_AFTER_ROTATION': True,
+    'ALGORITHM': 'HS256',
+    'SIGNING_KEY': SECRET_KEY,
+}
 
 # Internationalization
 LANGUAGE_CODE = 'en-us'

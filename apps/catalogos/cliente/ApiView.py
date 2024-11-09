@@ -1,26 +1,22 @@
-from mmap import error
-
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from yaml import serialize
 
-from apps.catalogos.categoria.models import Categoria
-from .serializers import CategoriaSerializer
+from apps.catalogos.cliente.models import Cliente
+from .serializers import ClienteSerializer
 from drf_yasg.utils import swagger_auto_schema
 
-class CategoriaApiView(APIView):
+class ClienteApiView(APIView):
 
-    @swagger_auto_schema(responses={200: CategoriaSerializer(many=True)})
+    @swagger_auto_schema(responses={200: ClienteSerializer(many=True)})
     def get(self, request):
+        clientes = Cliente.objects.all()
+        serializer = ClienteSerializer(clientes, many=True)
+        return Response(serializer.data)
 
-     categorias = Categoria.objects.all()
-     serializer = CategoriaSerializer(categorias, many=True)
-     return Response(serializer.data)
-
-    @swagger_auto_schema(request_body=CategoriaSerializer, responses={200: CategoriaSerializer})
+    @swagger_auto_schema(request_body=ClienteSerializer, responses={200: ClienteSerializer})
     def post(self, request):
-        serializer = CategoriaSerializer(data=request.data)
+        serializer = ClienteSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(status=status.HTTP_201_CREATED, data=serializer.data)
@@ -28,63 +24,51 @@ class CategoriaApiView(APIView):
 
 class CategoriaDetailApiView(APIView):
 
-    @swagger_auto_schema(responses={200: CategoriaSerializer})
+    @swagger_auto_schema(responses={200: ClienteSerializer})
     def get(self, request, pk:None):
         try:
-            categoria = Categoria.objects.get(pk=pk)
-        except Categoria.DoesNotExist:
-            return Response({'error': 'Categoria no encontrada'}, status=status.HTTP_404_NOT_FOUND)
-        serializer = CategoriaSerializer(categoria)
+            cliente = Cliente.objects.get(pk=pk)
+        except Cliente.DoesNotExist:
+            return Response({'error': 'Cliente no encontrado'}, status=status.HTTP_404_NOT_FOUND)
+        serializer = ClienteSerializer(cliente)
         return Response(serializer.data)
 
-    @swagger_auto_schema(request_body=CategoriaSerializer, responses={200: CategoriaSerializer})
+    @swagger_auto_schema(request_body=ClienteSerializer, responses={200: ClienteSerializer})
     def put(self, request, pk):
-
         try:
-            categoria = Categoria.objects.get(pk=pk)
-        except categoria.DoesNotExist:
-            return Response({'error': 'Categoria no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+            cliente = Cliente.objects.get(pk=pk)
+        except Cliente.DoesNotExist:
+            return Response({'error': 'Cliente no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        serialazer = CategoriaSerializer(instance=categoria, data=request.data)
-        if serialazer.is_valid():
-            serialazer.save()
-            return Response(serialazer.data)
-        return Response(serialazer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ClienteSerializer(instance=cliente, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(request_body=CategoriaSerializer, responses={200: CategoriaSerializer})
+    @swagger_auto_schema(request_body=ClienteSerializer, responses={200: ClienteSerializer})
     def patch(self, request, pk):
         try:
-            categoria = Categoria.objects.get(pk=pk)
-        except Categoria.DoesNotExist:
-            return Response({'error': 'Categoria no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+            cliente = Cliente.objects.get(pk=pk)
+        except Cliente.DoesNotExist:
+            return Response({'error': 'Cliente no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
-        serialazer = CategoriaSerializer(instance=categoria, data=request.data, partial=True)
-        if serialazer.is_valid():
-            serialazer.save()
-            return Response(serialazer.data)
-        return Response(serialazer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = ClienteSerializer(instance=cliente, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    @swagger_auto_schema(responses={204: 'Categoría eliminada correctamente'})
-
+    @swagger_auto_schema(responses={204: 'Cliente eliminado correctamente'})
     def delete(self, request, pk):
         try:
-            categoria = Categoria.objects.get(pk=pk)
-        except Categoria.DoesNotExist:
-            return Response({'error': 'Categoria no encontrada'}, status=status.HTTP_404_NOT_FOUND)
+            cliente = Cliente.objects.get(pk=pk)
+        except Cliente.DoesNotExist:
+            return Response({'error': 'Cliente no encontrado'}, status=status.HTTP_404_NOT_FOUND)
 
         try:
-            categoria.delete()
+            cliente.delete()
         except Exception as error:
             return Response({'error': str(error)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-#
-# from django.urls import path
-# from .views import CategoriaApiView, CategoriaDetailApiView
-# app_name = 'categoria'
-#
-# urlpatterns = [
-#     path('categorias/', CategoriaApiView.as_view(), name='api_categoria'),
-#     path('<int:pk>/', CategoriaDetailApiView.as_view()),
-# ]

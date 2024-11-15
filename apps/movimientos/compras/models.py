@@ -1,8 +1,7 @@
 from django.db import models
-
+from apps.catalogos.producto.models import Producto
 from apps.catalogos.proveedor.models import Proveedor
 from apps.seguridad.usuarios.models import User
-
 
 class Compra(models.Model):
     usuario = models.ForeignKey(User, verbose_name='Usuario', on_delete=models.PROTECT)
@@ -12,8 +11,8 @@ class Compra(models.Model):
     MontoTotal = models.DecimalField(max_digits=10, decimal_places=2)
     FechaRegistro=models.DateField(auto_now_add=True)
 
-    class Meta:
-        verbose_name_plural = 'Compras'
-
-    def __str__(self):
-        return (f"{self.NumeroDocumento}")
+class DetalleCompra(models.Model):
+        compra = models.ForeignKey(Compra, related_name='detalles', on_delete=models.PROTECT)
+        producto = models.ForeignKey(Producto, on_delete=models.PROTECT)
+        cantidad = models.IntegerField()
+        subtotal = models.DecimalField(max_digits=10, decimal_places=2)

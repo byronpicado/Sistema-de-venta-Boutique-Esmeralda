@@ -19,9 +19,9 @@ from datetime import timedelta
 SECRET_KEY = 'django-insecure-=w)=(#z1%-^hd!e$#!k!k&nx7oh)fz_#hn$i!^s(10o6%u$u1z'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+# DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 
 # Application definition
 INSTALLED_APPS = [
@@ -65,7 +65,7 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'config.wsgi.application'
-
+"""
 DATABASES = {
     'default': {
         'ENGINE': 'mssql',
@@ -79,6 +79,7 @@ DATABASES = {
         },
     }
 }
+"""
 
 # Password validation
 AUTH_PASSWORD_VALIDATORS = [

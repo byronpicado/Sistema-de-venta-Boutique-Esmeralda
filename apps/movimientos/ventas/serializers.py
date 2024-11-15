@@ -15,7 +15,7 @@ class DetalleVentaSerializer(ModelSerializer):
 """
 class VentaSerializer(ModelSerializer):
     cliente_nombre = CharField(source='cliente.nombres', read_only=True)
-    vendedor_nombre = CharField(source='vendedores.nombres', read_only=True)
+    vendedor_nombre = CharField(source='usuarios.name', read_only=True)
     detalles = DetalleVentaSerializer(many=True)
 
     class Meta:

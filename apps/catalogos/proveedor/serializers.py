@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
-from .models import Categoria
+from .models import Proveedor
 
-class CategoriaSerializer(ModelSerializer):
+class ProveedorSerializer(ModelSerializer):
     class Meta:
-        model = Categoria
-        fields = ('Descripcion', 'Estado', 'FechaRegistro')
+        model = Proveedor
+        fields = ('Documento', 'RazonSocial', 'Correo', 'Telefono', 'Estado', 'FechaRegistro')

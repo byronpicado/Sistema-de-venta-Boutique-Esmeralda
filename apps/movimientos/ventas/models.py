@@ -1,3 +1,5 @@
+from datetime import timezone
+
 from django.db import models
 from apps.catalogos.cliente.models import Cliente
 from apps.seguridad.usuarios.models import User
@@ -7,7 +9,7 @@ class Venta(models.Model):
     cliente = models.ForeignKey(Cliente, on_delete=models.PROTECT)
     vendedores = models.ForeignKey(User, on_delete=models.PROTECT)
     fecha = models.DateTimeField(auto_now_add=True)
-    total = models.DecimalField(max_digits=10, decimal_places=2)
+    total = models.DecimalField(max_digits=10, decimal_places=2, default=0)
 
 class DetalleVenta(models.Model):
     venta = models.ForeignKey(Venta, related_name='detalles' , on_delete=models.PROTECT)

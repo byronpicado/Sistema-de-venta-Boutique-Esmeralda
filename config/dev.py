@@ -1,7 +1,7 @@
 from .base import *
 from decouple import config
 
-Debug = True
+DEBUG = True
 ALLOWED_HOSTS = ['127.0.0.1', 'localhost']
 
 DATABASES = {

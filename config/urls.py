@@ -25,6 +25,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 
+from apps.catalogos.producto.views import ProductoDetailApiView
+
 schema_view = get_schema_view(
    openapi.Info(
       title="Snippets API",
@@ -49,6 +51,7 @@ urlpatterns = [
     path('catalogos/', include('apps.catalogos.urls')),
     path('movimientos/', include('apps.movimientos.urls')),
     path('seguridad/', include('apps.seguridad.urls'))
+
 ]
 
 

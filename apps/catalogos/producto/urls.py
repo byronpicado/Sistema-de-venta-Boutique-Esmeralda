@@ -4,5 +4,5 @@ app_name = 'producto'
 
 urlpatterns = [
     path('producto/', ProductoApiView.as_view(), name='api_producto'),
-    path('<int:pk>/', ProductoDetailApiView.as_view()),
+    path('producto/<int:pk>/', ProductoDetailApiView.as_view(), name='api_producto_detail'),
 ]

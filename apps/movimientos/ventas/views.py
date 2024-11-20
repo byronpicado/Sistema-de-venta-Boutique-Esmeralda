@@ -11,8 +11,24 @@ from drf_yasg.utils import swagger_auto_schema
     Endpoint de Venta
 """
 class VentaAPIView(APIView):
+    """
+    This class handles the creation of new sales in the system.
+
+    Methods:
+    post: Creates a new sale record in the database.
+    """
+
     @swagger_auto_schema(request_body=VentaSerializer)
     def post(self, request):
+        """
+        Creates a new sale record in the database.
+
+        Parameters:
+        request (Request): The incoming request containing the sale data.
+
+        Returns:
+        Response: A response object with the created sale data or an error message.
+        """
         serializer = VentaSerializer(data=request.data)
 
         if serializer.is_valid():

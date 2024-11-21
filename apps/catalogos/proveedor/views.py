@@ -10,16 +10,42 @@ from .serializers import ProveedorSerializer
 from drf_yasg.utils import swagger_auto_schema
 
 class ProveedorApiView(APIView):
+    """
+    This class represents the API view for managing Proveedor objects.
+    It provides endpoints for retrieving, creating, updating, and deleting Proveedores.
+
+    Methods:
+    - get: Retrieves all Proveedores.
+    - post: Creates a new Proveedor.
+    """
 
     @swagger_auto_schema(responses={200: ProveedorSerializer(many=True)})
     def get(self, request):
+        """
+        Retrieves all Proveedores.
 
-     proveedores = Proveedor.objects.all()
-     serializer = ProveedorSerializer(proveedores, many=True)
-     return Response(serializer.data)
+        Parameters:
+        - request: The request object containing the HTTP request.
+
+        Returns:
+        - Response: A response object containing a list of serialized Proveedores.
+        """
+        proveedores = Proveedor.objects.all()
+        serializer = ProveedorSerializer(proveedores, many=True)
+        return Response(serializer.data)
 
     @swagger_auto_schema(request_body=ProveedorSerializer, responses={200: ProveedorSerializer})
     def post(self, request):
+        """
+        Creates a new Proveedor.
+
+        Parameters:
+        - request: The request object containing the HTTP request.
+
+        Returns:
+        - Response: A response object containing the serialized created Proveedor.
+        - Response: A response object with a 400 status code if the request data is invalid.
+        """
         serializer = ProveedorSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -27,9 +53,30 @@ class ProveedorApiView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class ProveedorDetailApiView(APIView):
+    """
+    This class represents the API view for managing individual Proveedor objects.
+    It provides endpoints for retrieving, updating, and deleting a specific Proveedor.
+
+    Methods:
+    - get: Retrieves a Proveedor by its primary key.
+    - put: Updates a Proveedor by its primary key.
+    - patch: Partially updates a Proveedor by its primary key.
+    - delete: Deletes a Proveedor by its primary key.
+    """
 
     @swagger_auto_schema(responses={200: ProveedorSerializer})
-    def get(self, request, pk:None):
+    def get(self, request, pk: None):
+        """
+        Retrieves a Proveedor by its primary key.
+
+        Parameters:
+        - request: The request object containing the HTTP request.
+        - pk: The primary key of the Proveedor to retrieve.
+
+        Returns:
+        - Response: A response object containing the serialized Proveedor.
+        - Response: A response object with a 404 status code if the Proveedor is not found.
+        """
         try:
             proveedor = Proveedor.objects.get(pk=pk)
         except Proveedor.DoesNotExist:
@@ -39,7 +86,18 @@ class ProveedorDetailApiView(APIView):
 
     @swagger_auto_schema(request_body=ProveedorSerializer, responses={200: ProveedorSerializer})
     def put(self, request, pk):
+        """
+        Updates a Proveedor by its primary key.
 
+        Parameters:
+        - request: The request object containing the HTTP request.
+        - pk: The primary key of the Proveedor to update.
+
+        Returns:
+        - Response: A response object containing the serialized updated Proveedor.
+        - Response: A response object with a 404 status code if the Proveedor is not found.
+        - Response: A response object with a 400 status code if the request data is invalid.
+        """
         try:
             proveedor = Proveedor.objects.get(pk=pk)
         except proveedor.DoesNotExist:
@@ -53,6 +111,18 @@ class ProveedorDetailApiView(APIView):
 
     @swagger_auto_schema(request_body=ProveedorSerializer, responses={200: ProveedorSerializer})
     def patch(self, request, pk):
+        """
+        Partially updates a Proveedor by its primary key.
+
+        Parameters:
+        - request: The request object containing the HTTP request.
+        - pk: The primary key of the Proveedor to partially update.
+
+        Returns:
+        - Response: A response object containing the serialized partially updated Proveedor.
+        - Response: A response object with a 404 status code if the Proveedor is not found.
+        - Response: A response object with a 400 status code if the request data is invalid.
+        """
         try:
             proveedor = Proveedor.objects.get(pk=pk)
         except Proveedor.DoesNotExist:
@@ -65,8 +135,19 @@ class ProveedorDetailApiView(APIView):
         return Response(serialazer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(responses={204: 'Proveedor eliminado correctamente'})
-
     def delete(self, request, pk):
+        """
+        Deletes a Proveedor by its primary key.
+
+        Parameters:
+        - request: The request object containing the HTTP request.
+        - pk: The primary key of the Proveedor to delete.
+
+        Returns:
+        - Response: A response object with a 204 status code if the Proveedor is deleted successfully.
+        - Response: A response object with a 404 status code if the Proveedor is not found.
+        - Response: A response object with a 500 status code if an error occurs during deletion.
+        """
         try:
             proveedor = Proveedor.objects.get(pk=pk)
         except Proveedor.DoesNotExist:

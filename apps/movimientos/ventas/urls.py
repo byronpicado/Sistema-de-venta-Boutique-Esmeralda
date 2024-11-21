@@ -1,7 +1,8 @@
 from django.urls import path
-from .views import VentaAPIView
+from .views import VentaAPIView, CancelarVentaView, ReporteVentasAPIView
 
-app_name = 'venta'
 urlpatterns = [
-    path('', VentaAPIView.as_view(), name='ventas'),
+    path('', VentaAPIView.as_view(), name='venta'),
+    path('ventas/cancelar/<int:pk>/', CancelarVentaView.as_view(), name='cancelar_venta'),
+    path('ventas/reporteVentas/<int:pk>/', ReporteVentasAPIView.as_view(), name='cancelar_venta'),
 ]

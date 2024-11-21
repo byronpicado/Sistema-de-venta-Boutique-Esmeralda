@@ -84,6 +84,27 @@ class VentaAPIView(APIView):
 
 
 class CancelarVentaView(APIView):
+    """
+    Cancels a sale in the system.
+
+    This class handles the cancellation of a sale by its ID. It retrieves the sale from the database,
+    calls the 'cancelar' method on the sale object, and returns a JSON response indicating the success
+    or failure of the cancellation.
+
+    Parameters:
+    request (Request): The incoming HTTP request containing the sale ID to be canceled.
+    venta_id (int): The ID of the sale to be canceled.
+
+    Returns:
+    JsonResponse: A JSON response indicating the success or failure of the cancellation.
+        - If the sale is successfully canceled, the response contains a 'message' key with the value
+          'Venta cancelada con éxito.'
+        - If the sale is not found, the response contains an 'error' key with the value 'Venta no encontrada.'
+          and a status code of 404.
+        - If an error occurs during the cancellation process, the response contains an 'error' key with
+          the error message and a status code of 400.
+    """
+
     def post(self, request, venta_id):
         try:
             venta = Venta.objects.get(id=venta_id)
@@ -100,6 +121,19 @@ from django.db.models import Sum
 class ReporteVentasAPIView(APIView):
     """
     Genera un reporte de ventas.
+
+    Método GET que permite generar un reporte de ventas filtrado por un rango de fechas.
+    El reporte incluye la fecha, el total de ventas y la cantidad de productos vendidos.
+
+    Parámetros:
+    request (Request): La petición HTTP que contiene los parámetros de consulta.
+        - fecha_inicio (str): Fecha de inicio del rango de fechas para filtrar las ventas.
+        - fecha_fin (str): Fecha de fin del rango de fechas para filtrar las ventas.
+
+    Retorna:
+    Response: Un objeto de respuesta con el reporte de ventas o un mensaje de error.
+        - status: Código de estado HTTP (200 OK si la operación es exitosa).
+        - data: Lista de diccionarios que contienen la fecha, el total de ventas y la cantidad de productos vendidos.
     """
 
     def get(self, request):

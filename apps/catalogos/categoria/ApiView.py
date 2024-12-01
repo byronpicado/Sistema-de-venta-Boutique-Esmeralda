@@ -39,17 +39,17 @@ class CategoriaDetailApiView(APIView):
 
     @swagger_auto_schema(request_body=CategoriaSerializer, responses={200: CategoriaSerializer})
     def put(self, request, pk):
-
         try:
             categoria = Categoria.objects.get(pk=pk)
-        except categoria.DoesNotExist:
+        except Categoria.DoesNotExist:  # Corregido aquí
             return Response({'error': 'Categoria no encontrada'}, status=status.HTTP_404_NOT_FOUND)
 
-        serialazer = CategoriaSerializer(instance=categoria, data=request.data)
-        if serialazer.is_valid():
-            serialazer.save()
-            return Response(serialazer.data)
-        return Response(serialazer.errors, status=status.HTTP_400_BAD_REQUEST)
+        serializer = CategoriaSerializer(instance=categoria,
+                                         data=request.data)  # Corregí el typo "serialazer" por "serializer"
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     @swagger_auto_schema(request_body=CategoriaSerializer, responses={200: CategoriaSerializer})
     def patch(self, request, pk):

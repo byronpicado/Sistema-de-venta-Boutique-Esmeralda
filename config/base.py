@@ -2,6 +2,10 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
+from decouple import config
+
+HOST_PAPERTRAIL = config('HOST_PAPERTRAIL')
+PORT_PAPERTRAIL = config('PORT_PAPERTRAIL', cast=int)
 
 # Cargar las variables de entorno desde el archivo .env
 load_dotenv()  # Esto carga las variables de entorno definidas en el archivo .env
@@ -76,7 +80,22 @@ TEMPLATES = [
         },
     },
 ]
-
+"""
+DATABASES = {
+    'default': {
+        'ENGINE': 'mssql',  # Utilizamos el backend mssql-django
+        'NAME': 'tiseybd',  # Nombre de la base de datos
+        'USER': 'tiseybd',  # Usuario de la base de datos
+        'PASSWORD': '1234**',  # Contraseña de la base de datos
+        'HOST': 'den1.mssql7.gear.host',  # IP del servidor SQL Server
+        #'PORT': '1220',  # Puerto del servidor SQL Server (1433 es el predeterminado)
+        'OPTIONS': {
+            'driver': 'ODBC Driver 17 for SQL Server',  # Especifica el driver ODBC que tienes instalado
+            'extra_params': 'TrustServerCertificate=yes',  # Útil si estás usando SSL sin un certificado de confianza
+        },
+    }
+}
+"""
 WSGI_APPLICATION = 'config.wsgi.application'
 
 # Password validation
@@ -105,7 +124,7 @@ REST_FRAMEWORK = {
 }
 
 SIMPLE_JWT = {
-    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=15),  # Se puede extender el tiempo de vida
+    'ACCESS_TOKEN_LIFETIME': timedelta(minutes=50),  # Se puede extender el tiempo de vida
     'REFRESH_TOKEN_LIFETIME': timedelta(days=1),  # Dependerá de la seguridad que necesites
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,

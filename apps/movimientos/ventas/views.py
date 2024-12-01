@@ -1,5 +1,6 @@
 from django.http import JsonResponse
 from django.shortcuts import get_object_or_404
+from drf_yasg import openapi
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status, viewsets
@@ -115,41 +116,38 @@ class CancelarVentaView(APIView):
         except ValueError as e:
             return JsonResponse({'error': str(e)}, status=400)
 
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.shortcuts import get_object_or_404
+from .models import Venta
 
-from django.db.models import Sum
-
-class ReporteVentasAPIView(APIView):
+class ReporteVentaPorIDAPIView(APIView):
     """
-    Genera un reporte de ventas.
-
-    Método GET que permite generar un reporte de ventas filtrado por un rango de fechas.
-    El reporte incluye la fecha, el total de ventas y la cantidad de productos vendidos.
-
-    Parámetros:
-    request (Request): La petición HTTP que contiene los parámetros de consulta.
-        - fecha_inicio (str): Fecha de inicio del rango de fechas para filtrar las ventas.
-        - fecha_fin (str): Fecha de fin del rango de fechas para filtrar las ventas.
-
-    Retorna:
-    Response: Un objeto de respuesta con el reporte de ventas o un mensaje de error.
-        - status: Código de estado HTTP (200 OK si la operación es exitosa).
-        - data: Lista de diccionarios que contienen la fecha, el total de ventas y la cantidad de productos vendidos.
+    Genera un reporte de una venta específica dado su ID.
     """
 
-    def get(self, request):
-        fecha_inicio = request.query_params.get('fecha_inicio')
-        fecha_fin = request.query_params.get('fecha_fin')
+    def get(self, request, venta_id):
+        # Buscar la venta por ID
+        venta = get_object_or_404(Venta, id=venta_id)
 
-        # Filtrar ventas por rango de fechas (opcional)
-        ventas = Venta.objects.all()
-        if fecha_inicio and fecha_fin:
-            ventas = ventas.filter(fecha__range=[fecha_inicio, fecha_fin])
+        # Obtener los detalles de la venta
+        detalles = venta.detalleventa_set.all()  # Relación inversa desde el modelo DetalleVenta
 
-        # Agregar total de ventas y productos vendidos
-        reporte = ventas.values('fecha__date').annotate(
-            total_ventas=Sum('total'),
-            cantidad_productos=Sum('detalles__cantidad')
-        ).order_by('fecha__date')
+        # Preparar los datos del reporte
+        reporte = {
+            "venta_id": venta.id,
+            "total_venta": venta.total,
+            "productos": [
+                {
+                    "producto_id": detalle.producto.id,
+                    "nombre": detalle.producto.nombre,
+                    "cantidad": detalle.cantidad,
+                    "subtotal": detalle.subtotal
+                }
+                for detalle in detalles
+            ]
+        }
 
+        # Retornar el reporte como respuesta JSON
         return Response(reporte, status=status.HTTP_200_OK)
-

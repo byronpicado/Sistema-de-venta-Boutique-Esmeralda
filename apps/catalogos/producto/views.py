@@ -1,5 +1,15 @@
 from mmap import error
+from django.db.models import Sum  # Asegúrate de importar Sum correctamente
+from django.db.models import Count  # Asegúrate de importar Count
 
+from django.db.models import Sum, Count
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+
+from . import models
+from .models import Producto
+from .serializers import ProductoEstadisticasSerializer
 from rest_framework import status
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -80,11 +90,59 @@ class ProductoDetailApiView(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
-from django.urls import path
-from .views import ProductoApiView, ProductoDetailApiView
-app_name = 'producto'
+ #    Vista para obtener estadísticas de productos.
+ #
+ #    Attributes:
+ #    ----------
+ #    APIView : django.views.generic.base.View
+ #        Clase base para vistas basadas en clases en Django REST Framework.
+ #
+ #    Methods:
+ #    -------
+ #    get(request)
+ #        Obtiene estadísticas de productos.
+ #
+ #    Returns:
+ #    -------
+ #    Response
+ #        Respuesta HTTP con los datos de estadísticas de productos.
+ #    """
+class ProductoEstadisticasApiView(APIView):
+    """
+    Vista para obtener estadísticas de productos.
+    """
 
-urlpatterns = [
-    path('productos/', ProductoApiView.as_view(), name='api_producto'),
-    path('<int:pk>/', ProductoDetailApiView.as_view()),
-]
+    def get(self, request):
+        # Estadísticas principales
+        total_activos = Producto.objects.filter(Estado=True).count()
+        total_stock = Producto.objects.aggregate(total=Sum('Stock'))['total'] or 0
+
+        # Agrupación por categoría
+        productos_por_categoria = (
+            Producto.objects.values('categoria__Descripcion')  # Ajusta si 'Descripcion' no es correcto
+            .annotate(count=Count('id'))
+            .order_by('categoria__Descripcion')
+        )
+        productos_por_categoria_dict = {item['categoria__Descripcion']: item['count'] for item in productos_por_categoria}
+
+        # Datos a devolver
+        data = {
+            "total_activos": total_activos,
+            "total_stock": total_stock,
+            "productos_por_categoria": productos_por_categoria_dict,
+        }
+
+        return Response(data, status=status.HTTP_200_OK)
+
+
+
+#
+#
+# from django.urls import path
+# from .views import ProductoApiView, ProductoDetailApiView
+# app_name = 'producto'
+#
+# urlpatterns = [
+#     path('productos/', ProductoApiView.as_view(), name='api_producto'),
+#     path('<int:pk>/', ProductoDetailApiView.as_view()),
+# ]

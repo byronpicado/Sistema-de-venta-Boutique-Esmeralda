@@ -1,8 +1,13 @@
 from django.urls import path
-from .views import VentaAPIView, CancelarVentaView, ReporteVentaPorIDAPIView
+from .views import VentaAPIView, VentaEstadisticaAPIView
 
 urlpatterns = [
-    path('', VentaAPIView.as_view(), name='venta'),
-    path('ventas/cancelar/<int:pk>/', CancelarVentaView.as_view(), name='cancelar_venta'),
-    path('ventas/<int:venta_id>/reporte/', ReporteVentaPorIDAPIView.as_view(), name='reporte-venta')
+    # Ruta para obtener y crear ventas
+    path('ventas/', VentaAPIView.as_view(), name='venta'),
+
+    # Ruta para obtener estadísticas de ventas
+    path("ventas/estadistica/", VentaEstadisticaAPIView.as_view(), name="estadisticas"),
+
+    # Ruta para actualizar o eliminar una venta específica
+    path('ventas/<int:pk>/', VentaAPIView.as_view(), name='venta-detalle'),
 ]

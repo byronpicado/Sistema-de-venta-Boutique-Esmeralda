@@ -160,12 +160,59 @@ class ProveedorDetailApiView(APIView):
 
         return Response(status=status.HTTP_204_NO_CONTENT)
 
+class ProveedorEstadoApiView(APIView):
+    """
+    Vista para filtrar proveedores por estado (activos/inactivos) y contarlos.
+    """
 
-from django.urls import path
-from .views import ProveedorApiView, ProveedorDetailApiView
-app_name = 'proveedor'
+    @swagger_auto_schema(
+        responses={200: "Lista de proveedores filtrados y su conteo"},
+        operation_summary="Filtrar y contar proveedores por estado",
+        operation_description="Devuelve una lista de proveedores activos o inactivos según el estado proporcionado y su conteo total."
+    )
+    def get(self, request, estado):
+        """
+        Filtra y cuenta proveedores según su estado.
 
-urlpatterns = [
-    path('proveedores/', ProveedorApiView.as_view(), name='api_proveedor'),
-    path('<int:pk>/', ProveedorDetailApiView.as_view()),
-]
+        Parámetros:
+        - estado: Booleano (True para activos, False para inactivos).
+
+        Retorna:
+        - Lista de proveedores filtrados.
+        - Conteo total de proveedores filtrados.
+        """
+        # Convertir el estado recibido a un booleano
+        if estado.lower() in ["true", "1", "activo"]:
+            estado_filtrado = True
+        elif estado.lower() in ["false", "0", "inactivo"]:
+            estado_filtrado = False
+        else:
+            return Response(
+                {"error": "El parámetro 'estado' debe ser 'true/activo' o 'false/inactivo'."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Filtrar los proveedores según el estado
+        proveedores = Proveedor.objects.filter(Estado=estado_filtrado)
+        total_proveedores = proveedores.count()
+
+        # Serializar los proveedores
+        serializer = ProveedorSerializer(proveedores, many=True)
+
+        # Retornar datos junto con el conteo
+        data = {
+            "total": total_proveedores,
+            "proveedores": serializer.data
+        }
+        return Response(data, status=status.HTTP_200_OK)
+
+
+#
+# from django.urls import path
+# from .views import ProveedorApiView, ProveedorDetailApiView
+# app_name = 'proveedor'
+#
+# urlpatterns = [
+#     path('proveedores/', ProveedorApiView.as_view(), name='api_proveedor'),
+#     path('<int:pk>/', ProveedorDetailApiView.as_view()),
+# ]
